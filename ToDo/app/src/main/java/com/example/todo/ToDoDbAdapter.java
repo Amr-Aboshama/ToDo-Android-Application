@@ -82,7 +82,7 @@ public class ToDoDbAdapter {
     //TODO implement the function deleteToDoById() to delete a certain todo given its id
     //DONE
     public void deleteToDoById(int nId) {
-        mDb.execSQL("DELETE FROM " + TABLE_NAME + " where id = " + nId);
+        mDb.execSQL("DELETE FROM " + TABLE_NAME + " where "+ COL_ID +" = " + nId);
     }
 
     //TODO implement the function deleteAllToDos() to delete all todos
