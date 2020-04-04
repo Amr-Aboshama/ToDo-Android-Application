@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,7 +106,7 @@ public class ToDoActivity extends AppCompatActivity {
         TextView Title = (TextView) dialog.findViewById(R.id.Dtitle);
         final EditText TODO_NAME = (EditText) dialog.findViewById(R.id.DeditText);
         final CheckBox IMPORTANT = (CheckBox) dialog.findViewById(R.id.DcheckBox);
-        Button SaveButton = (Button) dialog.findViewById(R.id.DsaveButton);
+        final Button SaveButton = (Button) dialog.findViewById(R.id.DsaveButton);
         Button CancelButton = (Button) dialog.findViewById(R.id.DcancelButton);
 
         //setting the custom dialog components:
@@ -114,13 +116,31 @@ public class ToDoActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+        TODO_NAME.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if(TODO_NAME.getText().toString().isEmpty()){SaveButton.setEnabled(false);}
+                else{SaveButton.setEnabled(true);}
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         //new todo
         if(TodoType.equals("New")){
             Title.setText("New ToDo");
+            SaveButton.setEnabled(false);
             SaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    String TodoName = TODO_NAME.getText().toString();
                     DbAdapter.createToDo(TODO_NAME.getText().toString(),IMPORTANT.isChecked());
                     Cursor newCursor = DbAdapter.fetchAllToDos();
                     ToDoAdapter.changeCursor(newCursor);
@@ -133,6 +153,7 @@ public class ToDoActivity extends AppCompatActivity {
             Title.setText("Edit ToDo");
             TODO_NAME.setText(todo.getContent());
             IMPORTANT.setChecked(todo.isImportant());
+            SaveButton.setEnabled(true);
             SaveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
