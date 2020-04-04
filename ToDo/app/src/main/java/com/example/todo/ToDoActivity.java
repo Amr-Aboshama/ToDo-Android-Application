@@ -116,16 +116,17 @@ public class ToDoActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+        
         TODO_NAME.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(TODO_NAME.getText().toString().isEmpty()){SaveButton.setEnabled(false);}
-                else{SaveButton.setEnabled(true);}
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                if(TODO_NAME.getText().toString().isEmpty()) {SaveButton.setEnabled(false);}
+                else {SaveButton.setEnabled(true);}
             }
 
             @Override
