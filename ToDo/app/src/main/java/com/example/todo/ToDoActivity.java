@@ -152,6 +152,7 @@ public class ToDoActivity extends AppCompatActivity {
         else {
             Title.setText("Edit ToDo");
             TODO_NAME.setText(todo.getContent());
+            TODO_NAME.setSelection(TODO_NAME.getText().length());
             IMPORTANT.setChecked(todo.isImportant());
             SaveButton.setEnabled(true);
             SaveButton.setOnClickListener(new View.OnClickListener() {
