@@ -53,19 +53,28 @@ public class ToDoDbAdapter {
 
 
     //TODO implement the function createToDo() which take the name as the content of the ToDo and boolean important...note that the id will be created for you automatically
+    //DONE-->REHAM
     public void createToDo(String name, boolean important) {
-
+        int imp = important? 1:0;
+        mDb.execSQL("INSERT INTO "+ TABLE_NAME+" ( " +COL_CONTENT+" , " +COL_IMPORTANT+ " ) VALUES ( '"+ name+"' , "+ imp+" );" );
     }
     //TODO overloaded to take a todo
     public long createToDo(ToDo todo) {
-        //Amr added this to remove error
-        return 1;
+        mDb.execSQL("INSERT INTO "+ TABLE_NAME+" ( " +COL_CONTENT+" , " +COL_IMPORTANT+ " ) VALUES " +
+                "( '"+ todo.getContent()+"' , "+ todo.getImportant()+" );" );
+        return (1);
     }
 
     //TODO implement the function fetchToDoById() to get a certain todo given its id
+    //DONE-->REHAM
     public ToDo fetchToDoById(int id) {
-        //Amr added this to remove error
-       return (ToDo) (new Object());
+        ToDo todo = new ToDo();
+        Cursor cutsor = mDb.rawQuery("SELECT * FROM " + TABLE_NAME+ " WHERE "+COL_ID+" =?",new String[]{id+" "});
+        cutsor.moveToFirst();
+        todo.setContent(cutsor.getString(cutsor.getColumnIndex(COL_CONTENT)));
+        todo.setImportant(cutsor.getInt(cutsor.getColumnIndex(COL_IMPORTANT)));
+        todo.setId(cutsor.getInt(cutsor.getColumnIndex(COL_ID)));
+       return todo;
     }
 
 
@@ -76,8 +85,10 @@ public class ToDoDbAdapter {
     }
 
     //TODO implement the function updateToDo() to update a certain todo
+    //DONE-->REHAM
     public void updateToDo(ToDo todo) {
-       
+        mDb.execSQL("UPDATE "+ TABLE_NAME+" SET "+ COL_CONTENT + " = '"+ todo.getContent()+"' , "
+                + COL_IMPORTANT+ " = "+ todo.getImportant()+ " WHERE "+ COL_ID+" = "+todo.getId()+" ;");
     }
     //TODO implement the function deleteToDoById() to delete a certain todo given its id
     //DONE

@@ -10,7 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -25,7 +29,6 @@ public class ToDoActivity extends AppCompatActivity {
     ListView listView;
     AlertDialog.Builder builder;
     private int chosenToDo;
-
 
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
@@ -54,6 +57,7 @@ public class ToDoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 chosenToDo = (int)id;
                 //TODO Show (Alert Dialog with items) here
+                openTodoOptions(chosenToDo);
           }
         });
 
@@ -86,8 +90,88 @@ public class ToDoActivity extends AppCompatActivity {
         }
         else if(id == R.id.new_todo) {
             //TODO Put here custom dialog for (new ToDo)
+            openDialog("New",new ToDo());
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void openDialog(String TodoType, final ToDo todo){
+        final Dialog dialog = new Dialog(context);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_custom);
+
+        // initialize the custom dialog components:
+        TextView Title = (TextView) dialog.findViewById(R.id.Dtitle);
+        final EditText TODO_NAME = (EditText) dialog.findViewById(R.id.DeditText);
+        final CheckBox IMPORTANT = (CheckBox) dialog.findViewById(R.id.DcheckBox);
+        Button SaveButton = (Button) dialog.findViewById(R.id.DsaveButton);
+        Button CancelButton = (Button) dialog.findViewById(R.id.DcancelButton);
+
+        //setting the custom dialog components:
+        CancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        //new todo
+        if(TodoType.equals("New")){
+            Title.setText("New ToDo");
+            SaveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DbAdapter.createToDo(TODO_NAME.getText().toString(),IMPORTANT.isChecked());
+                    Cursor newCursor = DbAdapter.fetchAllToDos();
+                    ToDoAdapter.changeCursor(newCursor);
+                    dialog.dismiss();
+                }
+            });
+        }
+        //edit todo
+        else {
+            Title.setText("Edit ToDo");
+            TODO_NAME.setText(todo.getContent());
+            IMPORTANT.setChecked(todo.isImportant());
+            SaveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    todo.setContent(TODO_NAME.getText().toString());
+                    int Important = IMPORTANT.isChecked()? 1:0;
+                    todo.setImportant(Important);
+                    DbAdapter.updateToDo(todo);
+                    Cursor newCursor = DbAdapter.fetchAllToDos();
+                    ToDoAdapter.changeCursor(newCursor);
+                    dialog.dismiss();
+                }
+            });
+        }
+        //show dialog:
+        dialog.show();
+    }
+    public void openTodoOptions(final int CHOSEN){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        // add a list
+        String[] options = {"Edit ToDo", "Delete ToDo"};
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0: // Edit ToDo
+                        ToDo ChosenTodo = DbAdapter.fetchToDoById(CHOSEN);
+                        openDialog("Edit",ChosenTodo);
+                        break;
+                    case 1: // Delete Todo
+                        DbAdapter.deleteToDoById(CHOSEN);
+                        Cursor newCursor = DbAdapter.fetchAllToDos();
+                        ToDoAdapter.changeCursor(newCursor);
+                        break;
+                }
+            }
+        });
+        // create and show the alert dialog
+        AlertDialog OptionsDialog = builder.create();
+        OptionsDialog.show();
     }
 }

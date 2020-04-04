@@ -15,6 +15,7 @@ public class ToDo {
         mImportant = important;
         mContent = content;
     }
+    public ToDo(){}
     public int getId() {
         return mId;
     }
@@ -33,5 +34,6 @@ public class ToDo {
     public void setContent(String content) {
         mContent = content;
     }
+    public boolean isImportant(){return mImportant==1;}
 
 }
