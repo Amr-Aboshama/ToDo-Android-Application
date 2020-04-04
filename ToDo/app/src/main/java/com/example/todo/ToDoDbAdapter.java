@@ -69,11 +69,11 @@ public class ToDoDbAdapter {
     //DONE-->REHAM
     public ToDo fetchToDoById(int id) {
         ToDo todo = new ToDo();
-        Cursor cutsor = mDb.rawQuery("SELECT * FROM " + TABLE_NAME+ " WHERE "+COL_ID+" =?",new String[]{id+" "});
-        cutsor.moveToFirst();
-        todo.setContent(cutsor.getString(cutsor.getColumnIndex(COL_CONTENT)));
-        todo.setImportant(cutsor.getInt(cutsor.getColumnIndex(COL_IMPORTANT)));
-        todo.setId(cutsor.getInt(cutsor.getColumnIndex(COL_ID)));
+        Cursor cursor = mDb.rawQuery("SELECT * FROM " + TABLE_NAME+ " WHERE "+COL_ID+" =?",new String[]{id+" "});
+        cursor.moveToFirst();
+        todo.setContent(cursor.getString(cursor.getColumnIndex(COL_CONTENT)));
+        todo.setImportant(cursor.getInt(cursor.getColumnIndex(COL_IMPORTANT)));
+        todo.setId(cursor.getInt(cursor.getColumnIndex(COL_ID)));
        return todo;
     }
 
